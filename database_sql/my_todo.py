@@ -1,9 +1,14 @@
 import mariadb
 import sys
-from bottle import route, run
+from bottle import route, run, debug, template, TEMPLATE_PATH
 import identify as identity
+import os
+
+path_directory = os.path.join(os.getcwd(), '..', 'views')
+TEMPLATE_PATH.insert(0, path_directory)
 
 
+# connection à ma DB todoPython
 def connect_db():
     try:
         conn = mariadb.connect(
@@ -19,6 +24,7 @@ def connect_db():
         sys.exit(1)
 
 
+# création d'une table todo
 def setup_database(con):
     try:
         cur = con.cursor()
@@ -31,6 +37,7 @@ def setup_database(con):
         sys.exit(1)
 
 
+# insertion de données dans ma table todo
 def insert_into_todo_table(con):
     try:
         print("Connecting to the database...")
@@ -56,15 +63,23 @@ def insert_into_todo_table(con):
         sys.exit(1)
 
 
+# afficher via buttle
+@route('/todo')
+def todo_list():
+    conn = connect_db()
+    c = conn.cursor()
+    c.execute("SELECT id, task FROM todo WHERE status = 1")
+    result = c.fetchall()
+    return template('make_table', rows=result)
+
+
 def main():
     con = connect_db()
     setup_database(con)
     insert_into_todo_table(con)
-    run(host='localhost', port=8080, debug=True)
+    debug(True)
+    run(host='localhost', port=8080, reloader=True)
 
 
 if __name__ == '__main__':
     main()
-
-
-
