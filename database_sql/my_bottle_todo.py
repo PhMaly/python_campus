@@ -1,7 +1,7 @@
 import mariadb
 import sys
 from bottle import route, run
-import indentify as identity
+import identify as identity
 
 
 def connect_db():
