@@ -1,3 +1,4 @@
+# à finir !!!!
 def create_diamond(letter):
     if letter == "B":
         return """\
